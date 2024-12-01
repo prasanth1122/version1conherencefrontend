@@ -29,7 +29,7 @@ export default function HomePage() {
   const filteredArticles = Array.isArray(savedArticles) ? savedArticles : [];
 
   return (
-    <section className="w-full h-full flex flex-col items-center gap-8 overflow-x-hidden ">
+    <section className="w-full h-full flex flex-col items-center gap-8 overflow-x-hidden scrollbar-hide ">
       <Navbar />
       <main className="w-full mt-16 flex flex-col items-center gap-4">
         {/* Intro Section */}

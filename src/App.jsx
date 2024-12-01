@@ -45,7 +45,7 @@ const PrivateRoutes = () => {
 function App() {
   return (
     <Router>
-      <div className="w-screen h-screen ">
+      <div className="w-screen h-screen scrollbar-hide  ">
         <Routes>
           {/* Redirect the root (/) to /login */}
           <Route path="/" element={<Navigate to="/login" />} />

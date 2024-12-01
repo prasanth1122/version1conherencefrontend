@@ -79,7 +79,7 @@ export default function StorePage() {
   if (loading) return <LoadingComponent />;
 
   return (
-    <section className="w-full h-full flex flex-col items-center gap-8">
+    <section className="w-full h-full flex flex-col items-center gap-8 overflow-y-auto scrollbar-hide">
       <Navbar />
       <main className="w-mainWidth flex flex-col items-center mt-20">
         <h1 className="text-4xl font-bold">Store Page</h1>

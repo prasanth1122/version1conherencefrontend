@@ -93,7 +93,7 @@ const SubscriptionPage = () => {
                       <div className="w-4 h-4 bg-gray-200 rounded-full animate-pulse"></div>
                     }
                   >
-                    <LazyCheckCircleIcon className="text-green-300" />
+                    <LazyCheckCircleIcon className="text-green-300 min-w-4" />
                   </Suspense>
                   {feature}
                 </li>
