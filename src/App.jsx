@@ -11,10 +11,10 @@ import LoginPage from "./pages/loginPage";
 import SignupPage from "./pages/signupPage";
 
 import SubscriptionPage from "./pages/subscriptionPage";
-import LibraryPage from "./pages/libraryPage";
+
 import HomePage from "./pages/homePage";
 import { GlobalProvider } from "./store/context/globalContext.jsx";
-import Sidebar from "./components/sidebar/sidebar.jsx";
+
 import LibPage from "./pages/libpage.jsx";
 import ProfilePage from "./pages/profilePage.jsx";
 import PeriodicalPage from "./pages/periodicalPage.jsx";
@@ -59,7 +59,6 @@ function App() {
             {/* Login page route */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/side" element={<Sidebar />} />
 
             {/* Store page route protected by PrivateRoute */}
             <Route element={<PrivateRoutes />}>
@@ -67,9 +66,9 @@ function App() {
               <Route path="/store" element={<StorePage />} />
 
               <Route path="/subscription" element={<SubscriptionPage />} />
-              <Route path="/library" element={<LibPage />} />
+
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/lib" element={<LibPage />} />
+              <Route path="/library" element={<LibPage />} />
               <Route path="/:category/:id" element={<PeriodicalPage />} />
 
               <Route path="/analytics" element={<AnalyticsPage />} />
