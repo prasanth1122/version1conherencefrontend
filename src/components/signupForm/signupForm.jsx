@@ -16,6 +16,7 @@ export default function SignupForm() {
     password: "",
     confirmPassword: "",
     userType: "",
+    institution: "",
   });
   const [emailError, setEmailError] = useState(""); // State for email validation error
 
@@ -58,7 +59,8 @@ export default function SignupForm() {
       email: formData.email,
       password: formData.password,
       role: "user",
-      userType: formData.role, // or other role as needed
+      userType: formData.role,
+      institution: formData.institution, // or other role as needed
     };
 
     try {
@@ -169,6 +171,20 @@ export default function SignupForm() {
           value={formData.confirmPassword}
           onChange={handleChange}
           placeholder="Re-enter your password"
+          className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
+      <div className="w-full flex flex-col gap-2">
+        <label htmlFor="institution" className="text-lg font-medium">
+          Institution
+        </label>
+        <input
+          type="institution"
+          id="institution"
+          value={formData.institution}
+          onChange={handleChange}
+          placeholder="Enter Institution"
           className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-primary"
           required
         />

@@ -17,7 +17,8 @@ export default {
         highlight_background: "#F4F4F9",
       },
       width: {
-        mainWidth: "80%",
+        mainWidth: "98%",
+        sidebar: "15%",
         coverImage: "200px",
         ProblemStatement_md: "380px",
         ProblemStatement_xl: "510px",
@@ -37,7 +38,7 @@ export default {
       input_shadow: "inset 0px 2px 2px rgba(0, 0, 0, 0.2)", // Custom inner shadow
       cta_button_shadow: "0px 4px 4px rgba(0, 0, 0, 0.15)", //button shadow
       text_area_shadow: "0px 4px 4px rgba(0, 0, 0, 0.4)",
-      card_shadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+      card_shadow: "0px 4px 12px rgba(0, 0, 4, 0.15)",
     },
   },
   plugins: [scrollbarHide],

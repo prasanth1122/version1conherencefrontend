@@ -11,11 +11,16 @@ import { RiComputerFill } from "react-icons/ri";
 import { IoIosPricetag } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useGlobalContext } from "../store/context/globalContext.jsx";
+import Sidebar from "../components/sidebar/sidebar.jsx";
+import Trending from "../components/trendingJournlas/trending.jsx";
+import SampleCard from "../components/libraryCard/sampleCard.jsx";
 
 export default function HomePage() {
   const { savedArticles, loading, error } = useSelector(
     (state) => state.library
   );
+  const { isSidebarOpen } = useGlobalContext();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,11 +34,14 @@ export default function HomePage() {
   const filteredArticles = Array.isArray(savedArticles) ? savedArticles : [];
 
   return (
-    <section className="w-full h-full flex flex-col items-center gap-8 overflow-x-hidden scrollbar-hide ">
+    <section className="w-full  h-full flex flex-col items-center gap-8 overflow-x-hidden scrollbar-hide bg-highlight_background">
+      {/* Sidebar included here */}
+      {isSidebarOpen && <Sidebar />}
       <Navbar />
-      <main className="w-full mt-16 flex flex-col items-center gap-4">
+      {/* Main Content */}
+      <main className="w-full mt-20 flex flex-col items-center">
         {/* Intro Section */}
-        <section className="w-screen bg-[#2c2c2c] py-8 h-auto flex text-white justify-center">
+        <section className="w-mainWidth rounded-xl mt-1  bg-[#2c2c2c] py-8 h-auto flex text-white justify-center">
           <div className="w-mainWidth flex flex-col-reverse items-center md:flex-row md:items-start gap-6 md:justify-between">
             <div className="w-full md:h-coverImage md:w-2/3 flex flex-col items-center md:items-start md:gap-4 lg:gap-8 gap-4">
               <p className="text-2xl md:text-4xl font-bold ">
@@ -84,9 +92,9 @@ export default function HomePage() {
         </section>
 
         {/* Latest Articles Section */}
-        <section className="w-mainWidth">
-          <div className="w-full flex items-center justify-between">
-            <p className="text-2xl font-bold">Latest Articles</p>
+        <section className="w-mainWidth bg-terinary  mt-4 rounded-lg p-4">
+          <div className="w-full flex items-center justify-between ">
+            <p className="text-2xl font-bold ">Latest Articles</p>
             <p
               className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer"
               onClick={() => {
@@ -97,29 +105,19 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full h-1 bg-black mt-2"></div>
-          <div className="w-full flex items-start gap-4 overflow-x-auto mt-4 scrollbar-hide">
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((article) => (
-                <HomeLibraryCard
-                  key={article._id}
-                  id={article.articleId}
-                  title={article.title || "Untitled"}
-                  category={article.category || "Uncategorized"}
-                  month={article.month}
-                  year={article.year}
-                  isMonthlyEdition={article.isMonthlyEdition}
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">
-                No articles available.
-              </p>
-            )}
+          <div className="w-full flex items-start gap-4 overflow-x-auto mt-4 scrollbar-hide ">
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
           </div>
         </section>
-        <section className="w-mainWidth">
-          <div className="w-full flex items-center justify-between">
+
+        {/* Saved Articles Section */}
+        <section className="w-mainWidth bg-white  mt-4 rounded-xl p-4">
+          <div className="w-full flex items-center justify-between mt-1 ">
             <p className="text-2xl font-bold">Saved Articles</p>
             <p
               className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer"
@@ -131,25 +129,30 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full h-1 bg-black mt-2"></div>
+          <div className="w-full flex items-start gap-4 overflow-x-auto mt-2  scrollbar-hide">
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+            <SampleCard />
+          </div>
+        </section>
+        <section className="w-mainWidth  py-4">
+          <div className="w-full flex items-center justify-between">
+            <p className="text-2xl font-bold ">
+              Trending Articles and Journals
+            </p>
+            <p className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer">
+              See All <ArrowRight />
+            </p>
+          </div>
+
           <div className="w-full flex items-start gap-4 overflow-x-auto mt-4 scrollbar-hide">
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((article) => (
-                <HomeLibraryCard
-                  key={article._id}
-                  id={article.articleId}
-                  title={article.title || "Untitled"}
-                  category={article.category || "Uncategorized"}
-                  month={article.month}
-                  year={article.year}
-                  isMonthlyEdition={article.isMonthlyEdition}
-                />
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">
-                No articles available.
-              </p>
-            )}
+            <Trending />
+            <Trending />
+            <Trending />
+            <Trending />
           </div>
         </section>
       </main>

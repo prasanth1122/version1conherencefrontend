@@ -1,18 +1,16 @@
 import PropTypes from "prop-types";
-import articleImage from "../../assets/demoIMG.png"; // Import the article image
-import ReactStars from "react-rating-stars-component"; // Import react-stars for rating
 import { useNavigate } from "react-router-dom";
+import { FaEye } from "react-icons/fa"; // Import the eye icon for views
+import demoImg from "../../assets/demoIMG.png";
+export default function StoreCard({ id, title, category, month, year, views }) {
+  const handleCardClick = () => {
+    // Convert category to lowercase and remove spaces
+    const formattedCategory = category.toLowerCase().replace(/\s+/g, "");
 
-export default function StoreCard({
-  id,
-  title,
-  category,
-  month,
-  year,
-  averageRating,
-  accessLevel,
-  isMonthlyEdition,
-}) {
+    // Navigate to the dynamic route with the formatted category and ID
+    navigate(`/${formattedCategory}/${id}`);
+  };
+
   const navigate = useNavigate();
   const months = [
     "January",
@@ -29,34 +27,21 @@ export default function StoreCard({
     "December",
   ];
 
-  const accessColors = {
-    premium: "bg-gradient-to-r from-yellow-500 to-yellow-300 text-yellow-900",
-    advanced: "bg-gradient-to-r from-gray-500 to-gray-300 text-gray-900",
-    basic: "bg-gradient-to-r from-blue-500 to-blue-300 text-blue-900",
-  };
-
   return (
     <div
-      key={id}
-      className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center hover:cursor-pointer 
+      className="bg-highlight_background py-4 rounded-lg shadow-lg flex flex-col items-center hover:cursor-pointer hover:bg-terinary 
         transform transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-card_shadow"
-      onClick={() => {
-        if (isMonthlyEdition) {
-          navigate(`/coherenceapplied/${id}`); // Navigate to CoherenceAppliedPage
-        } else {
-          navigate(`/article/${id}`); // Navigate to ArticlePage
-        }
-      }}
+      onClick={handleCardClick} // Navigate to the PeriodicalPage
     >
       <img
-        src={articleImage}
+        src={demoImg} // Placeholder for image
         alt={title}
-        className="w-coverImage h-coverImage object-cover rounded-md"
+        className="w-coverImage rounded-xl h-coverImage object-cover "
       />
 
       <h2
-        className="text-2xl font-semibold mt-4 text-important_text text-center line-clamp-1 "
-        title={title} // Tooltip to show full text on hover
+        className="text-2xl font-semibold mt-4 text-important_text text-center line-clamp-1"
+        title={title}
       >
         {title}
       </h2>
@@ -67,22 +52,9 @@ export default function StoreCard({
       </p>
 
       <div className="flex items-center mt-2">
-        <ReactStars
-          count={5}
-          value={averageRating}
-          size={24}
-          activeColor="#ffd700"
-          isHalf={true}
-          edit={false}
-        />
-        <span className="ml-2">{averageRating}</span>
+        <FaEye className="text-gray-600" />
+        <span className="ml-2">{views} views</span>
       </div>
-
-      <p
-        className={`mt-4 py-2 px-4 rounded-md text-sm font-medium animate-gradient ${accessColors[accessLevel]}`}
-      >
-        {accessLevel.charAt(0).toUpperCase() + accessLevel.slice(1)} Access
-      </p>
     </div>
   );
 }
@@ -93,7 +65,7 @@ StoreCard.propTypes = {
   category: PropTypes.string.isRequired,
   month: PropTypes.number.isRequired,
   year: PropTypes.number.isRequired,
-  averageRating: PropTypes.number.isRequired,
-  accessLevel: PropTypes.string.isRequired,
-  isMonthlyEdition: PropTypes.bool.isRequired, // Added isMonthlyEdition prop validation
+  views: PropTypes.number.isRequired,
+  introduction: PropTypes.string.isRequired,
+  valueProposition: PropTypes.string.isRequired,
 };

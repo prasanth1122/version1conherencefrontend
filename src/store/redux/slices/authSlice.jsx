@@ -32,7 +32,8 @@ export const userSignup = createAsyncThunk(
         signupData.email,
         signupData.password,
         signupData.role,
-        signupData.userType
+        signupData.userType,
+        signupData.institution
       );
       return response; // Return the response payload
     } catch (error) {

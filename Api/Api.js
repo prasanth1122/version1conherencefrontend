@@ -32,7 +32,14 @@ export const login = async (email, password) => {
 };
 
 // Function to handle signup
-export const signup = async (name, email, password, role, userType) => {
+export const signup = async (
+  name,
+  email,
+  password,
+  role,
+  userType,
+  institution
+) => {
   try {
     const response = await api.post("/users/signup", {
       name,
@@ -40,6 +47,7 @@ export const signup = async (name, email, password, role, userType) => {
       password,
       role,
       userType,
+      institution,
     });
     return response.data;
   } catch (error) {
@@ -59,28 +67,59 @@ export const checkEmail = async (email) => {
     throw error;
   }
 };
-// Function to get all articles
-export const getAllArticles = async () => {
+
+export const getUserById = async (userId) => {
   try {
-    const response = await api.get("/articles");
-    return response.data; // Return the list of articles
+    const response = await api.get(`/users/${userId}`);
+    return response.data; // Assuming your API response contains the user in `data`
   } catch (error) {
-    console.error("Failed to fetch articles:", error);
+    console.error(
+      "Failed to fetch user by ID:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
-// Function to get a specific article by ID
 export const getArticleById = async (id) => {
   try {
-    const response = await api.get(`/articles/${id}`);
-    return response.data; // Return the article data
+    const response = await api.get(`/periodical/editorial/${id}`);
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch article by ID:", error);
     throw error;
   }
 };
 
+export const getAllArticles = async () => {
+  try {
+    const response = await api.get("/periodical/editorial");
+    return response.data; // Return the list of articles
+  } catch (error) {
+    console.error("Failed to fetch all articles:", error);
+    throw error;
+  }
+};
+
+export const getPeriodicalById = async (id) => {
+  try {
+    const response = await api.get(`/periodical/periodicals/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch periodical by ID:", error);
+    throw error;
+  }
+};
+
+export const getAllPeriodicals = async () => {
+  try {
+    const response = await api.get("/periodical/periodicals");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch all periodicals:", error);
+    throw error;
+  }
+};
 // Function to handle logout
 export const logout = async () => {
   try {

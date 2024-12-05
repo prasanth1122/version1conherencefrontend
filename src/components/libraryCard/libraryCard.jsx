@@ -27,7 +27,7 @@ export default function LibraryCard({
   return (
     <section
       className="w-coverImage flex flex-col gap-4 items-start hover:cursor-pointer 
-        transform transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-card_shadow p-4 "
+        transform transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-card_shadow p-4 hover:bg-white "
       onClick={() => {
         if (isMonthlyEdition) {
           navigate(`/coherenceapplied/${id}`); // Navigate to CoherenceAppliedPage
