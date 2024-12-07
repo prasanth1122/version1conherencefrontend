@@ -10,12 +10,14 @@ export const useGlobalContext = () => useContext(GlobalContext);
 export const GlobalProvider = ({ children }) => {
   // Sidebar state management
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [isCardOpen, setIsCardOpen] = useState(false);
   // Function to toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
   };
-
+  const toggleCollectionbar = () => {
+    setIsCardOpen((prevState) => !prevState);
+  };
   // Here, you can add other states and their corresponding functions
   // For example, a modal, notifications, user info, etc.
 
@@ -23,6 +25,8 @@ export const GlobalProvider = ({ children }) => {
   const contextValue = {
     isSidebarOpen,
     toggleSidebar,
+    isCardOpen,
+    toggleCollectionbar,
     // Add more states or functions here if needed
   };
 

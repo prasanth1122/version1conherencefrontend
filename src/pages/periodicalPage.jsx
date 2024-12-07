@@ -55,7 +55,7 @@ export default function PeriodicalPage() {
           <div className="w-mainWidth flex flex-col-reverse items-center md:flex-row md:items-start gap-6 md:justify-between">
             <img
               src={demoImg}
-              className="w-coverImage h-coverImage"
+              className="w-coverImage rounded-xl h-coverImage"
               alt={title}
             />
             <div className="w-full flex flex-col items-center md:items-start md:gap-4 lg:gap-8 gap-4">
@@ -80,8 +80,8 @@ export default function PeriodicalPage() {
           {/* Render article cards dynamically */}
           {periodical.data.articles?.map((article) => (
             <ArticleCard
-              key={article._id}
-              id={article._id}
+              key={article.articleId}
+              id={article.articleId}
               article={article}
               parentcategory={category}
             />

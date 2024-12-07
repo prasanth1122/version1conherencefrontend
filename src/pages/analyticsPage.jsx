@@ -83,11 +83,7 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="flex flex-col items-start gap-2 bg-white w-full py-4 rounded-xl px-2">
-            <p className="text-4xl ">#22,034 Rank</p>
-            <p className="text-lg">Global Rank</p>
-            <p className="text-lg">
-              Among top 2.8% of Global Pioneers in Microbiology
-            </p>
+            <p>Rankings Coming soon</p>
           </div>
         </div>
       </main>

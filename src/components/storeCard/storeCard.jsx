@@ -2,7 +2,16 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa"; // Import the eye icon for views
 import demoImg from "../../assets/demoIMG.png";
-export default function StoreCard({ id, title, category, month, year, views }) {
+
+export default function StoreCard({
+  id,
+  title,
+  category,
+  month,
+  year,
+  views,
+  subscription,
+}) {
   const handleCardClick = () => {
     // Convert category to lowercase and remove spaces
     const formattedCategory = category.toLowerCase().replace(/\s+/g, "");
@@ -29,15 +38,18 @@ export default function StoreCard({ id, title, category, month, year, views }) {
 
   return (
     <div
-      className="bg-highlight_background py-4 rounded-lg shadow-lg flex flex-col items-center hover:cursor-pointer hover:bg-terinary 
-        transform transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-card_shadow"
+      className="rounded-lg flex flex-col gap-2 items-center hover:cursor-pointer 
+        "
       onClick={handleCardClick} // Navigate to the PeriodicalPage
     >
-      <img
-        src={demoImg} // Placeholder for image
-        alt={title}
-        className="w-coverImage rounded-xl h-coverImage object-cover "
-      />
+      {/* Wrapper to control image hover effect */}
+      <div className="w-coverImage h-coverImage rounded-xl my-2 overflow-hidden">
+        <img
+          src={demoImg} // Placeholder for image
+          alt={title}
+          className="w-full h-full rounded-xl  transition-transform duration-300 ease-in-out hover:-translate-y-2"
+        />
+      </div>
 
       <h2
         className="text-2xl font-semibold mt-4 text-important_text text-center line-clamp-1"
@@ -55,6 +67,9 @@ export default function StoreCard({ id, title, category, month, year, views }) {
         <FaEye className="text-gray-600" />
         <span className="ml-2">{views} views</span>
       </div>
+      <button className="px-4 py-2 text-lg rounded-lg bg-secondary mt-2 text-white font-bold">
+        {subscription}
+      </button>
     </div>
   );
 }

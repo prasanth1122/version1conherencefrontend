@@ -1,21 +1,59 @@
 import Navbar from "../components/navbar/navbar";
 import Sidebar from "../components/sidebar/sidebar";
 import { useGlobalContext } from "../store/context/globalContext.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getUserById, updateUserById } from "../../Api/Api.js"; // Import API functions
 
 export default function ProfilePage() {
   const { isSidebarOpen } = useGlobalContext();
-
   const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState({});
+  const [newPreference, setNewPreference] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userId = localStorage.getItem("user"); // Replace with actual user ID
+        const data = await getUserById(userId);
+        setUser(data.user);
+      } catch (error) {
+        console.error("Error fetching user:", error.message);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleEditToggle = () => {
     setIsEditing((prev) => !prev); // Toggle the isEditing state
   };
 
-  const handleSubmit = () => {
+  const handlePreferenceChange = (e) => {
+    setNewPreference(e.target.value);
+  };
+
+  const handlePreferenceSubmit = async () => {
+    try {
+      const updatedUser = {
+        ...user,
+        preferences: [...user.preferences, newPreference],
+      };
+      await updateUserById(user._id, updatedUser);
+      setUser(updatedUser);
+      setNewPreference(""); // Clear the input
+    } catch (error) {
+      console.error("Error updating preferences:", error.message);
+    }
+  };
+
+  const handleSubmit = async () => {
     setIsEditing(false);
-    // Add logic to handle form submission (e.g., API call)
-    console.log("Form submitted");
+    try {
+      await updateUserById(user._id, user);
+      console.log("Form submitted");
+    } catch (error) {
+      console.error("Error submitting form:", error.message);
+    }
   };
 
   return (
@@ -48,8 +86,7 @@ export default function ProfilePage() {
                 />
               </svg>
             )}
-            {isEditing ? "Cancel" : "Edit"}{" "}
-            {/* Button text changes based on isEditing */}
+            {isEditing ? "Cancel" : "Edit"}
           </button>
         </div>
 
@@ -59,37 +96,71 @@ export default function ProfilePage() {
             <input
               className="w-full px-4 py-2 bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
               type="text"
-              id="text"
-              value="John Doe"
+              value={user.name}
               disabled={!isEditing}
               placeholder="Enter your Name"
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
             />
           </div>
           <div className="w-full flex flex-col items-start gap-2">
             <p className="w-full text-lg font-bold">Email</p>
             <input
-              className="w-full px-4 py-2  bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
               type="email"
-              id="email"
-              value="admin@gmail.com"
-              disabled={!isEditing}
+              value={user.email}
+              disabled // Disable the email field
               placeholder="Enter your Email"
             />
           </div>
           <div className="w-full flex items-center gap-6 my-8">
             <p className="text-lg font-bold">User:</p>
-            <p className="text-lg">Student</p>
+            <p className="text-lg">{user.role}</p>
           </div>
           <div className="w-full flex flex-col items-start gap-2">
             <p className="w-full text-lg font-bold">Institution</p>
             <input
-              className="w-full px-4 py-2  bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
               type="text"
-              id="university"
-              value="XYZ University"
+              value={user.institution}
               disabled={!isEditing}
               placeholder="Enter Institution Name"
+              onChange={(e) =>
+                setUser({ ...user, institution: e.target.value })
+              }
             />
+          </div>
+
+          {/* Preferences Section */}
+          <div className="w-full flex flex-col items-start gap-2">
+            <p className="w-full text-lg font-bold">Preferences</p>
+            {user.preferences && user.preferences.length > 0 ? (
+              <ul>
+                {user.preferences.map((pref, index) => (
+                  <li key={index} className="text-lg">
+                    {pref}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-lg">No preferences set</p>
+            )}
+            {isEditing && (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"
+                  value={newPreference}
+                  onChange={handlePreferenceChange}
+                  placeholder="Add new preference"
+                />
+                <button
+                  className="px-4 py-2 text-lg text-white font-semibold rounded-lg bg-primary"
+                  onClick={handlePreferenceSubmit}
+                >
+                  Add
+                </button>
+              </div>
+            )}
           </div>
         </section>
 

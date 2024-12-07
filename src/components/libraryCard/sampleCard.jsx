@@ -19,7 +19,7 @@ export default function SampleCard() {
   ];
   return (
     <section
-      className="max-w-coverImage flex flex-col gap-4 rounded-xl items-start hover:cursor-pointer p-6
+      className="max-w-coverImage flex flex-col gap-4 rounded-xl items-start hover:cursor-pointer 
         transform transition-transform duration-300 ease-in-out  hover:shadow-card_shadow hover:-translate-y-4 "
     >
       <img

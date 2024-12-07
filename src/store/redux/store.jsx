@@ -6,6 +6,7 @@ import libraryReducer from "../redux/slices/librarySlice.jsx";
 import periodicalsReducer from "../redux/slices/periodicalSlice.jsx";
 import periodicalidReducer from "../redux/slices/periodicalbyidSlice.jsx";
 import profileReducer from "../redux/slices/profileSlice.jsx";
+import subscriptionReducer from "../redux/slices/userSubscription.jsx";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -14,6 +15,7 @@ const store = configureStore({
     periodicals: periodicalsReducer,
     periodicalid: periodicalidReducer,
     profile: profileReducer,
+    subscriptionData: subscriptionReducer,
   },
 });
 

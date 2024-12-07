@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSavedArticles } from "../store/redux/slices/librarySlice.jsx";
+
 import Navbar from "../components/navbar/navbar";
-import HomeLibraryCard from "../components/libraryCard/homeSaveCard.jsx";
+import { fetchPeriodicals } from "../store/redux/slices/periodicalSlice.jsx";
 import LoadingComponent from "../components/loadingComponent/loadingComponent.jsx";
 import demoImg from "../assets/demoIMG.png";
 import { FaArrowRight, FaGlobe } from "react-icons/fa";
@@ -16,22 +16,28 @@ import Sidebar from "../components/sidebar/sidebar.jsx";
 import Trending from "../components/trendingJournlas/trending.jsx";
 import SampleCard from "../components/libraryCard/sampleCard.jsx";
 
+import PeriodicalCard from "../components/libraryCard/periodicalCard.jsx";
+
 export default function HomePage() {
-  const { savedArticles, loading, error } = useSelector(
-    (state) => state.library
+  const { periodicals, loading, error } = useSelector(
+    (state) => state.periodicals
   );
+  const [pData, setPData] = useState([]);
   const { isSidebarOpen } = useGlobalContext();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [artData, setArtData] = useState([]);
 
   useEffect(() => {
-    dispatch(fetchSavedArticles(localStorage.getItem("user")));
+    dispatch(fetchPeriodicals());
   }, [dispatch]);
 
+  useEffect(() => {
+    setPData(periodicals?.data);
+    console.log(pData);
+  }, [periodicals, pData, artData]);
   if (loading) return <LoadingComponent />;
   if (error) return <div>Error loading article data.</div>;
-
-  const filteredArticles = Array.isArray(savedArticles) ? savedArticles : [];
 
   return (
     <section className="w-full  h-full flex flex-col items-center gap-8 overflow-x-hidden scrollbar-hide bg-highlight_background">
@@ -87,7 +93,10 @@ export default function HomePage() {
                 </button>
               </div>
             </div>
-            <img src={demoImg} className="w-coverImage h-coverImage" />
+            <img
+              src={demoImg}
+              className="w-coverImage rounded-xl h-coverImage"
+            />
           </div>
         </section>
 
@@ -106,38 +115,27 @@ export default function HomePage() {
           </div>
 
           <div className="w-full flex items-start gap-4 overflow-x-auto mt-4 scrollbar-hide ">
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
+            {pData?.length > 0 ? (
+              <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                {pData.map((periodical) => (
+                  <PeriodicalCard
+                    key={periodical._id}
+                    id={periodical._id}
+                    title={periodical.title}
+                    category={periodical.category}
+                    month={periodical.month}
+                    year={periodical.year}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>No periodicals available this month.</p>
+            )}
           </div>
         </section>
 
         {/* Saved Articles Section */}
-        <section className="w-mainWidth bg-white  mt-4 rounded-xl p-4">
-          <div className="w-full flex items-center justify-between mt-1 ">
-            <p className="text-2xl font-bold">Saved Articles</p>
-            <p
-              className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer"
-              onClick={() => {
-                navigate("/library");
-              }}
-            >
-              See All <ArrowRight />
-            </p>
-          </div>
 
-          <div className="w-full flex items-start gap-4 overflow-x-auto mt-2  scrollbar-hide">
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-            <SampleCard />
-          </div>
-        </section>
         <section className="w-mainWidth  py-4">
           <div className="w-full flex items-center justify-between">
             <p className="text-2xl font-bold ">
@@ -148,11 +146,22 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="w-full flex items-start gap-4 overflow-x-auto mt-4 scrollbar-hide">
-            <Trending />
-            <Trending />
-            <Trending />
-            <Trending />
+          <div className="w-full flex p-2 items-start gap-8 overflow-x-auto mt-4 scrollbar-hide">
+            {pData?.length > 0 ? (
+              <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                {pData[0]?.articles.map((article) => (
+                  <Trending
+                    id={article.articleId._id}
+                    key={article.articleId._id}
+                    category={article.articleId.category}
+                    title={article.articleId.title}
+                    value={article.articleId.valueProposition}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>No periodicals available this month.</p>
+            )}
           </div>
         </section>
       </main>

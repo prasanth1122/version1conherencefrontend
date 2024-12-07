@@ -22,13 +22,6 @@ const articleSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {
-    resetArticleState: (state) => {
-      state.article = null;
-      state.loading = false;
-      state.error = null;
-    },
-  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchArticleById.pending, (state) => {
@@ -46,5 +39,4 @@ const articleSlice = createSlice({
   },
 });
 
-export const { resetArticleState } = articleSlice.actions;
 export default articleSlice.reducer;

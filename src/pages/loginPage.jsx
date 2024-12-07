@@ -33,10 +33,12 @@ export default function LoginPage() {
       // Save the token in localStorage
       localStorage.setItem("token", userData?.token);
       localStorage.setItem("user", userData?.user.id);
+      localStorage.setItem("name", userData?.user.name);
       console.log(
         "Token saved in localStorage:",
         localStorage.getItem("token"),
-        localStorage.getItem("user")
+        localStorage.getItem("user"),
+        localStorage.getItem("name")
       );
 
       // Mark navigation as done

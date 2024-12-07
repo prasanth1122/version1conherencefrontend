@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPeriodicals } from "../store/redux/slices/periodicalSlice.jsx"; // Import the Redux slice
+import { fetchPeriodicals } from "../store/redux/slices/periodicalSlice.jsx";
 import Navbar from "../components/navbar/navbar.jsx";
 import StoreCard from "../components/storeCard/storeCard.jsx";
 import LoadingComponent from "../components/loadingComponent/loadingComponent.jsx";
 import { useGlobalContext } from "../store/context/globalContext.jsx";
 import Sidebar from "../components/sidebar/sidebar.jsx";
-import { FaSearch } from "react-icons/fa"; // Importing the search icon from react-icons
+import { FaSearch } from "react-icons/fa";
 
 export default function StorePage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const dispatch = useDispatch();
-  const { periodicals, loading } = useSelector((state) => state.periodicals); // Access periodicals from Redux
+  const { periodicals, loading } = useSelector((state) => state.periodicals);
 
   const { isSidebarOpen } = useGlobalContext();
 
@@ -20,14 +20,11 @@ export default function StorePage() {
     dispatch(fetchPeriodicals());
   }, [dispatch]);
 
-  // Log the periodicals data after dispatch
-  useEffect(() => {
-    console.log("Fetched Periodicals:", periodicals);
-  }, [periodicals]); // Log whenever periodicals change
+  const currentMonth = new Date().getMonth() + 1; // Current month (1-based index)
+  const currentYear = new Date().getFullYear(); // Current year
 
   if (loading) return <LoadingComponent />;
 
-  // Access periodicals from the 'data' key in the fetched result
   const periodicalsData = periodicals?.data || [];
 
   // Filter periodicals based on the search term
@@ -41,12 +38,27 @@ export default function StorePage() {
     );
   });
 
+  // Group periodicals by month and year
+  const groupedPeriodicals = Array.from({ length: 12 }, (_, i) => {
+    const month = ((currentMonth - i + 11) % 12) + 1; // Wrap-around for months
+    const year = currentYear - (month > currentMonth ? 1 : 0); // Adjust year for wrapped months
+
+    return {
+      month,
+      year,
+      periodicals: filteredPeriodicals.filter(
+        (p) => p.month === month && p.year === year
+      ),
+    };
+  });
+
   return (
-    <section className="w-full h-full flex flex-col items-center  overflow-y-auto scrollbar-hide">
+    <section className="w-full h-full flex flex-col items-center overflow-y-auto scrollbar-hide">
       {isSidebarOpen && <Sidebar />}
       <Navbar />
       <main className="w-mainWidth flex flex-col items-center mt-20 py-8">
-        <div className="w-full flex items-center justify-center gap-4 ">
+        {/* Search Bar */}
+        <div className="w-full flex items-center justify-center gap-4">
           <div className="relative w-3/4">
             <input
               type="text"
@@ -59,53 +71,53 @@ export default function StorePage() {
           </div>
         </div>
 
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
-          {/* Map through filteredPeriodicals instead of periodicals */}
-          {filteredPeriodicals.length > 0 ? (
-            filteredPeriodicals.map((periodical) => (
-              <StoreCard
-                key={periodical._id}
-                id={periodical._id}
-                title={periodical.title}
-                category={periodical.category}
-                month={periodical.month}
-                year={periodical.year}
-                views={periodical.views}
-              />
-            ))
-          ) : (
-            <p>No periodicals found</p> // Show message if no periodicals match the search
-          )}
-          {filteredPeriodicals.length > 0 ? (
-            filteredPeriodicals.map((periodical) => (
-              <StoreCard
-                key={periodical._id}
-                id={periodical._id}
-                title={periodical.title}
-                category={periodical.category}
-                month={periodical.month}
-                year={periodical.year}
-                views={periodical.views}
-              />
-            ))
-          ) : (
-            <p>No periodicals found</p> // Show message if no periodicals match the search
-          )}
-          {filteredPeriodicals.length > 0 ? (
-            filteredPeriodicals.map((periodical) => (
-              <StoreCard
-                key={periodical._id}
-                id={periodical._id}
-                title={periodical.title}
-                category={periodical.category}
-                month={periodical.month}
-                year={periodical.year}
-                views={periodical.views}
-              />
-            ))
-          ) : (
-            <p>No periodicals found</p> // Show message if no periodicals match the search
-          )}
+        {/* Periodicals by Month */}
+        <div className="w-full flex flex-col gap-8 mt-8">
+          {groupedPeriodicals.map(({ month, year, periodicals }) => {
+            const monthNames = [
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December",
+            ];
+
+            return (
+              <div
+                key={`${month}-${year}`}
+                className="w-full p-4 bg-highlight_background rounded-xl"
+              >
+                <h2 className="text-2xl text-important_text font-bold mb-4">
+                  {monthNames[month - 1]} {year}
+                </h2>
+                {periodicals.length > 0 ? (
+                  <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                    {periodicals.map((periodical) => (
+                      <StoreCard
+                        key={periodical._id}
+                        id={periodical._id}
+                        title={periodical.title}
+                        category={periodical.category}
+                        month={periodical.month}
+                        year={periodical.year}
+                        views={periodical.views}
+                        subscription={periodical.subscription}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p>No periodicals available this month.</p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </main>
     </section>
