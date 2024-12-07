@@ -1,6 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-const url = "http://localhost:5000/api";
+const url = "https://version1coherence-1.onrender.com/api";
 
 // Create an Axios instance
 const api = axios.create({
