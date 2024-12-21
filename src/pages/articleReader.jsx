@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom"; // For accessing URL params
 import { fetchArticleById } from "../store/redux/slices/articleSlice.jsx";
-import { FaShareAlt } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaShareAlt } from "react-icons/fa";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 import Navbar from "../components/navbar/navbar";
 import Sidebar from "../components/sidebar/sidebar";
@@ -20,7 +20,8 @@ import {
   likeArticle,
   dislikeArticle,
 } from "../../Api/Api.js";
-
+import { toast } from "react-toastify"; // Import toast
+import { fetchUserSubscription } from "../store/redux/slices/userSubscription.jsx";
 import CollectionSection from "../components/collectionSection/collectionSection.jsx";
 export default function ArticleReader() {
   const { isSidebarOpen, isCardOpen, toggleCollectionbar } = useGlobalContext();
@@ -34,15 +35,23 @@ export default function ArticleReader() {
   const [status, setStatus] = useState("neither"); // "liked" | "disliked" | "neither"
   const [loadingStatus, setLoadingStatus] = useState(false); // To disable buttons while updating
   const [isArticleSaved, setIsArticleSaved] = useState(false); // State for article status
+  const { subscription } = useSelector((state) => state.subscriptionData);
+
   // Fetch the current article's status
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchUserSubscription(userId));
+    }
+  }, [dispatch, userId]);
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const response = await checkArticleStatus(userId, id);
-        console.log(response);
+
         setStatus(response.status);
       } catch (error) {
-        console.error("Error checking article status:", error);
+        toast.error("Error checking article status!");
       }
     };
 
@@ -54,8 +63,9 @@ export default function ArticleReader() {
       setLoadingStatus(true);
       await likeArticle(userId, id);
       setStatus("liked"); // Update UI to show "liked"
+      toast.success("Article liked successfully!");
     } catch (error) {
-      console.error("Error liking article:", error);
+      toast.error(error);
     } finally {
       setLoadingStatus(false);
     }
@@ -66,8 +76,10 @@ export default function ArticleReader() {
       setLoadingStatus(true);
       await dislikeArticle(userId, id);
       setStatus("disliked"); // Update UI to show "disliked"
+      toast.success("Article disliked successfully!");
     } catch (error) {
-      console.error("Error disliking article:", error);
+      toast.error("Error disliking article!");
+      console.error(error);
     } finally {
       setLoadingStatus(false);
     }
@@ -75,10 +87,54 @@ export default function ArticleReader() {
   const checkIfArticleSaved = async () => {
     try {
       const data = await isArticleSavedInAnyCollection(userId, id);
-      console.log(data);
       setIsArticleSaved(data.saved);
     } catch (error) {
-      console.error("Error checking if article is saved:", error);
+      toast.error("Error checking if article is saved!");
+      console.error(error);
+    }
+  };
+
+  const [currentIndex, setCurrentIndex] = useState(0); // Tracks current string in the array
+  const [typedText, setTypedText] = useState(""); // For typing effect
+  const typingSpeed = 10; // Typing speed in milliseconds
+
+  // Example array of strings to type out
+  const fullTextArray = article?.data?.content || [];
+
+  // Typing effect logic
+  useEffect(() => {
+    let index = 0;
+    const currentText = fullTextArray[currentIndex] || ""; // Ensure currentText is always a valid string
+    let typingTimeout;
+
+    setTypedText(""); // Reset the typed text on index change
+
+    const type = () => {
+      if (index <= currentText.length) {
+        setTypedText(currentText.slice(0, index)); // Slice ensures valid characters are typed
+        index++;
+        typingTimeout = setTimeout(type, typingSpeed);
+      }
+    };
+
+    type();
+
+    // Cleanup timeout on component unmount or index change
+    return () => {
+      clearTimeout(typingTimeout);
+    };
+  }, [currentIndex, fullTextArray]); // Add fullTextArray as a dependency
+
+  // Handlers for navigation
+  const handleNext = () => {
+    if (currentIndex < fullTextArray.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
     }
   };
 
@@ -97,19 +153,9 @@ export default function ArticleReader() {
     }
 
     if (error) {
-      console.error("Error fetching article:", error);
+      toast.error(error);
     }
-  }, [article, error]);
-
-  useEffect(() => {
-    if (periodical) {
-      console.log(periodical);
-    }
-
-    if (error) {
-      console.error("Error fetching article:", error);
-    }
-  }, [periodical, error]);
+  }, [article, error, dispatch]);
 
   const formatDate = (month, year) => {
     const months = [
@@ -172,7 +218,47 @@ export default function ArticleReader() {
             <div className="w-full min-h-36 rounded-xl bg-important_text shadow-card_shadow text-white p-4">
               {article?.data.valueProposition}
             </div>
-            <div className="w-full h-[450px] rounded-xl bg-highlight_background border-2"></div>
+            <div className="w-full h-[450px] rounded-xl bg-highlight_background border-2 p-4 text-lg text-gray-800 relative">
+              {subscription?.data?.isActive &&
+              subscription?.data?.type.toLowerCase() ===
+                article?.data?.subscription.toLowerCase() ? (
+                // Display content if subscription is valid
+                <>
+                  <p>{typedText}</p>
+                  {/* Navigation Arrows */}
+                  <button
+                    className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-secondary text-white p-2 rounded-full hover:shadow-lg"
+                    onClick={handlePrevious}
+                    disabled={currentIndex === 0} // Disable when on the first string
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-secondary text-white p-2 rounded-full hover:shadow-lg"
+                    onClick={handleNext}
+                    disabled={currentIndex === fullTextArray.length - 1} // Disable when on the last string
+                  >
+                    <FaChevronRight />
+                  </button>
+                </>
+              ) : (
+                // Display Subscribe Now button if subscription is invalid or inactive
+                <div className="flex flex-col items-center justify-center h-full">
+                  <p className="text-lg font-bold text-center">
+                    To access this content, please upgrade your subscription.
+                  </p>
+                  <button
+                    className="mt-4 bg-secondary text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl"
+                    onClick={() => {
+                      // Redirect or handle subscription logic
+                      window.location.href = "/subscription";
+                    }}
+                  >
+                    Subscribe Now
+                  </button>
+                </div>
+              )}
+            </div>
           </section>
           <section className="w-full lg:flex-1 lg:w-0 lg:ml-4  p-4 h-full bg-highlight_background rounded-xl flex flex-col items-start gap-4">
             <div className="flex w-full items-center gap-8 bg-white rounded-xl p-4">

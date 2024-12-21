@@ -24,6 +24,7 @@ import Today from "./pages/todayPage.jsx";
 import ThisWeek from "./pages/thisWeekPage.jsx";
 import ThisMonth from "./pages/thisMonth.jsx";
 import CollectionPage from "./pages/collectionPage.jsx";
+import AllSaved from "./pages/allsaved.jsx";
 // PrivateRoute component to protect the route
 // PrivateRoute component
 const PrivateRoutes = () => {
@@ -81,6 +82,7 @@ function App() {
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/article/:id" element={<ArticleReader />} />
               <Route path="/collection/:id" element={<CollectionPage />} />
+              <Route path="/collection/allsaved" element={<AllSaved />} />
             </Route>
 
             {/* Handle 404 for undefined routes */}

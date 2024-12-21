@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-
 import demoImg from "../../assets/demoIMG.png";
 
 export default function PeriodicalCard({ id, title, category, month, year }) {
@@ -20,21 +19,20 @@ export default function PeriodicalCard({ id, title, category, month, year }) {
     "December",
   ];
   const formattedCategory = category.toLowerCase().replace(/\s+/g, "");
+
   return (
     <div
-      className="rounded-lg flex flex-col gap-2 items-center hover:cursor-pointer 
-        "
+      className="rounded-lg flex flex-col gap-2 items-center hover:cursor-pointer"
       onClick={() => {
         navigate(`/${formattedCategory}/${id}`);
       }}
-      // Navigate to the PeriodicalPage
     >
-      {/* Wrapper to control image hover effect */}
-      <div className="w-coverImage h-coverImage rounded-xl my-2 overflow-hidden">
+      {/* Image Wrapper */}
+      <div className="w-coverImage h-coverImage rounded-xl my-2 relative">
         <img
           src={demoImg} // Placeholder for image
           alt={title}
-          className="w-full h-full rounded-xl  transition-transform duration-300 ease-in-out hover:-translate-y-2"
+          className="w-full h-full rounded-xl object-cover transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-lg"
         />
       </div>
 

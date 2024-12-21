@@ -7,8 +7,8 @@ import LibCard from "../components/libraryCard/libCard.jsx"; // Adjust path as n
 
 export default function ThisMonth() {
   const { isSidebarOpen } = useGlobalContext();
-  const [likedArticles, setLikedArticles] = useState([]);
-  const [thisMonthLikedArticles, setThisMonthLikedArticles] = useState([]);
+  const [likedArticles, setLikedArticles] = useState([]); // Store all liked articles
+  const [thisMonthLikedArticles, setThisMonthLikedArticles] = useState([]); // Store filtered articles
   const userId = localStorage.getItem("user"); // Adjust to match your storage format
 
   useEffect(() => {
@@ -24,8 +24,8 @@ export default function ThisMonth() {
 
         // Filter articles liked this month
         const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth(); // Current month (0-based index)
+        const currentYear = today.getFullYear(); // Current year
 
         const filteredArticles = likedArticles.filter((article) => {
           const likedDate = new Date(article.likedAt);
@@ -35,7 +35,7 @@ export default function ThisMonth() {
           );
         });
 
-        setThisMonthLikedArticles(filteredArticles);
+        setThisMonthLikedArticles(filteredArticles); // Update filtered articles
       } catch (error) {
         console.error("Failed to fetch liked articles:", error);
       }
@@ -56,7 +56,7 @@ export default function ThisMonth() {
         </p>
         {thisMonthLikedArticles.length > 0 ? (
           <div className="w-full flex items-start gap-4 mt-4 flex-wrap">
-            {thisMonthLikedArticles.map((article) => (
+            {thisMonthLikedArticles?.map((article) => (
               <LibCard
                 key={article.articleId._id}
                 id={article.articleId._id}

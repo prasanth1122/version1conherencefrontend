@@ -1,6 +1,6 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-const url = "https://version1coherence-1.onrender.com/api";
+const url = "http://localhost:5000/api";
 
 // Create an Axios instance
 const api = axios.create({
@@ -62,9 +62,14 @@ export const capturePayment = async (paymentId, amount) => {
   }
 };
 
-export const verifyPayment = async (paymentId, orderId, signature) => {
+export const verifyPayment = async ({ paymentId, orderId, signature }) => {
   try {
-    const response = await api.post("/payment/verify-payment", {
+    console.log("Sending verification data:", {
+      paymentId,
+      orderId,
+      signature,
+    });
+    const response = await api.post("/payment/verifypayment", {
       paymentId,
       orderId,
       signature,
@@ -337,24 +342,15 @@ export const getLikedArticles = async (userId) => {
   }
 };
 // Create or update a subscription
-export const createOrUpdateSubscription = async (
-  userId,
-  type,
-  paymentStatus
-) => {
+export const createSubscription = async (subscriptionData) => {
   try {
-    const response = await api.post("/subscriptions", {
-      userId,
-      type,
-      paymentStatus,
-    });
+    const response = await api.post("/subscriptions/create", subscriptionData);
     return response.data;
   } catch (error) {
-    console.error("Failed to create or update subscription:", error);
-    throw error;
+    console.error("Create subscription failed", error.response?.data || error);
+    throw error; // Throwing error to be handled by the caller
   }
 };
-
 // Get the user's active subscription
 export const getUserSubscription = async (userId) => {
   try {

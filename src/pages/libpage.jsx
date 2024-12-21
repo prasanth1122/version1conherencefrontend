@@ -52,7 +52,7 @@ export default function LibPage() {
             <p className="text-2xl font-bold">Library</p>
             <div className="w-full flex items-start gap-8 lg:gap-0 lg:justify-between overflow-x-scroll scrollbar-hide">
               <div
-                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between shadow-card_shadow border-2 border-black-300 hover:border-0"
+                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between hover:cursor-pointer hover:shadow-card_shadow "
                 onClick={() => {
                   navigate("/library/today");
                 }}
@@ -61,7 +61,7 @@ export default function LibPage() {
                 <p className="text-base">{dayjs().format("DD MMM YYYY")}</p>
               </div>
               <div
-                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between shadow-card_shadow border-2 border-black-300 hover:border-0"
+                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between hover:cursor-pointer hover:shadow-card_shadow"
                 onClick={() => {
                   navigate("/library/thisweek");
                 }}
@@ -70,7 +70,7 @@ export default function LibPage() {
                 <p className="text-base">Week {getWeekNumber(new Date())}</p>
               </div>
               <div
-                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between shadow-card_shadow border-2 border-black-300 hover:border-0"
+                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between hover:cursor-pointer hover:shadow-card_shadow"
                 onClick={() => {
                   navigate("/library/thismonth");
                 }}
@@ -83,7 +83,12 @@ export default function LibPage() {
           <div className="w-full flex flex-col gap-2">
             <p className="text-2xl font-bold">Saved</p>
             <div className="w-full flex items-start gap-8 lg:gap-0 lg:justify-between overflow-x-scroll scrollbar-hide">
-              <div className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between shadow-card_shadow border-2 border-black-300 hover:border-0">
+              <div
+                className="min-w-60 h-28 px-4 rounded-xl bg-terinary flex items-center justify-between hover:cursor-pointer hover:shadow-card_shadow"
+                onClick={() => {
+                  navigate("/collection/allsaved");
+                }}
+              >
                 <p className="text-lg font-bold">All saved</p>
               </div>
             </div>

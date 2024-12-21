@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { fetchUserSubscription } from "../store/redux/slices/userSubscription.jsx"; // Adjust the import path
 import { useGlobalContext } from "../store/context/globalContext.jsx";
 import { lazy, Suspense } from "react";
+import { toast } from "react-toastify"; // Import toast
 
 // Lazy-load Navbar component
 const Navbar = lazy(() => import("../components/navbar/navbar"));
@@ -12,7 +13,11 @@ const LazyCheckCircleIcon = lazy(() =>
   import("react-icons/fa").then((module) => ({ default: module.FaCheckCircle }))
 );
 
-import { createOrder, verifyPayment } from "../../Api/Api.js"; // Adjust the import path
+import {
+  createOrder,
+  verifyPayment,
+  createSubscription,
+} from "../../Api/Api.js"; // Adjust the import path
 import Sidebar from "../components/sidebar/sidebar.jsx";
 
 const SubscriptionPage = () => {
@@ -45,46 +50,59 @@ const SubscriptionPage = () => {
     "5 user accounts",
   ];
 
-  {
-    /*const handlePayment = async () => {
+  const handlePayment = async () => {
     const amount = 100 * 1; // Adjust based on your pricing logic
 
     try {
       const orderData = await createOrder(amount);
+      toast.info("Order created. Proceeding to payment...");
       handlePaymentVerify(orderData);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to create order. Please try again.");
     }
   };
 
-  const handlePaymentVerify = async (data) => {
+  const handlePaymentVerify = async (orderData) => {
     const options = {
-      key: "{}.eA2OwT8pi1MX3U34i3KfdnNQ", // Replace with your actual key
-      amount: data.amount,
-      currency: data.currency,
+      key: "rzp_test_ZTBCgSo4BMBW4Y", // Replace with your actual Razorpay key
+      amount: orderData.data.amount,
+      currency: orderData.data.currency,
       name: "Devknus",
       description: "Test Mode",
-      order_id: data.id,
+      order_id: orderData.data.id, // Pass the order ID here
       handler: async (response) => {
         console.log("Payment Success Response", response);
         try {
-          const verifyData = await verifyPayment(
-            response.razorpay_payment_id,
-            response.razorpay_order_id,
-            response.razorpay_signature
-          );
+          const verifyData = await verifyPayment({
+            paymentId: response.razorpay_payment_id,
+            orderId: response.razorpay_order_id,
+            signature: response.razorpay_signature,
+          });
 
           if (verifyData.success) {
-            console.log("success", verifyData.success);
+            toast.success("Payment verified successfully!");
 
-            // Generate PDF after successful payment verification
+            // Create or update subscription on successful verification
+            const subscriptionData = {
+              userId,
+              type: "premium", // Always "premium" for now as "basic" is free and "institutional" unavailable
+              paymentStatus: "completed", // Payment is verified as completed
+            };
 
-            // Add content to the PDF
+            try {
+              const result = await createSubscription(subscriptionData);
+              toast.success("Subscription created/updated successfully!");
 
-            // You can also add color
+              // Refresh subscription details after creation
+              dispatch(fetchUserSubscription(userId));
+            } catch (subscriptionError) {
+              toast.error("Failed to create/update subscription.");
+            }
+          } else {
+            toast.error("Payment verification failed. Please try again.");
           }
-        } catch (error) {
-          console.log(error);
+        } catch (verificationError) {
+          toast.error("Error verifying payment. Please contact support.");
         }
       },
       theme: {
@@ -92,21 +110,14 @@ const SubscriptionPage = () => {
       },
       modal: {
         ondismiss: () => {
-          alert("Payment modal dismissed!");
-        },
-        onPaymentSuccess: (response) => {
-          alert("Payment Successful!", response);
-        },
-        onPaymentFailed: (error) => {
-          alert("Payment Failed", error);
+          toast.warning("Payment modal dismissed!");
         },
       },
     };
 
-    const rzp1 = new window.Razorpay(options);
-    rzp1.open();
-  };*/
-  }
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
 
   return (
     <section className="w-full h-full flex flex-col items-center pb-4 justify-between  bg-gray-100 overflow-x-hidden lg:overflow-y-hidden  scrollbar-hide">
@@ -119,13 +130,33 @@ const SubscriptionPage = () => {
           <p className="text-lg font-bold">{subscription?.data.type}</p>
           <p>
             <span className="text-lg font-bold">Start Date: </span>
-            {new Date(subscription?.data.startDate).toLocaleDateString()}
+            {subscription?.data.startDate
+              ? new Date(subscription?.data.startDate).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  }
+                )
+              : "N/A"}
           </p>
           <p>
             <span className="text-lg font-bold">End Date: </span>
             {subscription?.data.endDate
-              ? new Date(subscription?.data.endDate).toLocaleDateString()
+              ? new Date(subscription?.data.endDate).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  }
+                )
               : "N/A"}
+          </p>
+          <p>
+            <span className="text-lg font-bold">Status: </span>
+            {subscription?.data.isActive ? "Active" : "Inactive"}
           </p>
         </div>
       </div>
@@ -165,7 +196,7 @@ const SubscriptionPage = () => {
             className={`flex flex-col items-center bg-terinary justify-between rounded-xl p-8 shadow-xl transition-all duration-300 hover:scale-105  border-2 border-black relative`}
           >
             <h2 className="text-3xl font-bold">Premium</h2>
-            <p className="text-2xl font-semibold mt-4">Free</p>
+            <p className="text-2xl font-semibold mt-4">10$/month</p>
             <p className="text-lg mt-4 text-center">
               For professionals who need more.
             </p>
@@ -183,7 +214,10 @@ const SubscriptionPage = () => {
                 </li>
               ))}
             </ul>
-            <button className="px-4 py-2 rounded-lg bg-secondary mt-4">
+            <button
+              className="px-4 py-2 rounded-lg bg-secondary mt-4 font-bold text-white hover:shadow-cta_button_shadow"
+              onClick={handlePayment}
+            >
               Subscribe
             </button>
           </div>
@@ -193,7 +227,7 @@ const SubscriptionPage = () => {
             <h2 className="text-3xl font-bold">Institutional</h2>
             <p className="text-2xl font-semibold mt-4">Verification Required</p>
             <p className="text-lg mt-4 text-center">
-              For individuals exploring our platform.
+              For professionals exploring our platform.
             </p>
             <ul className="mt-8 space-y-3 text-left">
               <li className="flex items-center gap-2">

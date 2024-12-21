@@ -103,7 +103,7 @@ export default function HomePage() {
         {/* Latest Articles Section */}
         <section className="w-mainWidth bg-terinary  mt-4 rounded-lg p-4">
           <div className="w-full flex items-center justify-between ">
-            <p className="text-2xl font-bold ">Latest Articles</p>
+            <p className="text-2xl font-bold ">Latest Periodicals</p>
             <p
               className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer"
               onClick={() => {
@@ -138,25 +138,32 @@ export default function HomePage() {
 
         <section className="w-mainWidth  py-4">
           <div className="w-full flex items-center justify-between">
-            <p className="text-2xl font-bold ">
-              Trending Articles and Journals
-            </p>
-            <p className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer">
+            <p className="text-2xl font-bold ">Trending Articles</p>
+            <p
+              className="flex items-center gap-4 text-lg hover:underline hover:text-secondary text-important_text hover:cursor-pointer"
+              onClick={() => {
+                navigate("/store");
+              }}
+            >
               See All <ArrowRight />
             </p>
           </div>
 
           <div className="w-full flex p-2 items-start gap-8 overflow-x-auto mt-4 scrollbar-hide">
             {pData?.length > 0 ? (
-              <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-6">
                 {pData[0]?.articles.map((article) => (
-                  <Trending
-                    id={article.articleId._id}
+                  <div
                     key={article.articleId._id}
-                    category={article.articleId.category}
-                    title={article.articleId.title}
-                    value={article.articleId.valueProposition}
-                  />
+                    className="flex-shrink-0 rounded-xl overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105"
+                  >
+                    <Trending
+                      id={article.articleId._id}
+                      category={article.articleId.category}
+                      title={article.articleId.title}
+                      value={article.articleId.valueProposition}
+                    />
+                  </div>
                 ))}
               </div>
             ) : (

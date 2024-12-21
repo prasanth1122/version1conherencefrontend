@@ -54,7 +54,7 @@ export default function ThisWeek() {
         </p>
         {thisWeekLikedArticles.length > 0 ? (
           <div className="w-full flex items-start gap-4 mt-4 flex-wrap">
-            {thisWeekLikedArticles.map((article) => (
+            {thisWeekLikedArticles?.map((article) => (
               <LibCard
                 key={article.articleId._id}
                 id={article.articleId._id}

@@ -43,7 +43,7 @@ export default function StoreCard({
       onClick={handleCardClick} // Navigate to the PeriodicalPage
     >
       {/* Wrapper to control image hover effect */}
-      <div className="w-coverImage h-coverImage rounded-xl my-2 overflow-hidden">
+      <div className="w-coverImage h-coverImage rounded-xl my-2 ">
         <img
           src={demoImg} // Placeholder for image
           alt={title}

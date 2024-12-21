@@ -3,12 +3,14 @@ import Sidebar from "../components/sidebar/sidebar";
 import { useGlobalContext } from "../store/context/globalContext.jsx";
 import { useState, useEffect } from "react";
 import { getUserById, updateUserById } from "../../Api/Api.js"; // Import API functions
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
   const { isSidebarOpen } = useGlobalContext();
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({});
   const [newPreference, setNewPreference] = useState("");
+  const [originalPreferences, setOriginalPreferences] = useState([]); // To store original preferences before editing
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -16,6 +18,7 @@ export default function ProfilePage() {
         const userId = localStorage.getItem("user"); // Replace with actual user ID
         const data = await getUserById(userId);
         setUser(data.user);
+        setOriginalPreferences(data.user.preferences || []); // Save original preferences
       } catch (error) {
         console.error("Error fetching user:", error.message);
       }
@@ -25,32 +28,47 @@ export default function ProfilePage() {
   }, []);
 
   const handleEditToggle = () => {
-    setIsEditing((prev) => !prev); // Toggle the isEditing state
+    setIsEditing((prev) => !prev);
+
+    // Reset preferences to original when canceling edit mode
+    if (isEditing) {
+      setUser({ ...user, preferences: [...originalPreferences] });
+      setNewPreference("");
+    }
   };
 
   const handlePreferenceChange = (e) => {
     setNewPreference(e.target.value);
   };
 
-  const handlePreferenceSubmit = async () => {
-    try {
-      const updatedUser = {
-        ...user,
-        preferences: [...user.preferences, newPreference],
-      };
-      await updateUserById(user._id, updatedUser);
-      setUser(updatedUser);
-      setNewPreference(""); // Clear the input
-    } catch (error) {
-      console.error("Error updating preferences:", error.message);
+  const handlePreferenceSubmit = () => {
+    if (
+      newPreference.trim() &&
+      !user.preferences.includes(newPreference.trim())
+    ) {
+      setUser((prevUser) => ({
+        ...prevUser,
+        preferences: [...prevUser.preferences, newPreference.trim()],
+      }));
+      setNewPreference("");
+    } else if (newPreference.trim()) {
+      toast.error("Preference already exists!");
     }
+  };
+
+  const handleDeletePreference = (index) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      preferences: prevUser.preferences.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = async () => {
     setIsEditing(false);
     try {
       await updateUserById(user._id, user);
-      console.log("Form submitted");
+      setOriginalPreferences([...user.preferences]); // Save updated preferences as original
+      toast.success("Profile updated");
     } catch (error) {
       console.error("Error submitting form:", error.message);
     }
@@ -136,8 +154,19 @@ export default function ProfilePage() {
             {user.preferences && user.preferences.length > 0 ? (
               <ul>
                 {user.preferences.map((pref, index) => (
-                  <li key={index} className="text-lg">
+                  <li
+                    key={index}
+                    className="text-lg flex items-center justify-between w-full"
+                  >
                     {pref}
+                    {isEditing && (
+                      <button
+                        className="flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full hover:shadow-sm"
+                        onClick={() => handleDeletePreference(index)}
+                      >
+                        ✕
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -145,7 +174,7 @@ export default function ProfilePage() {
               <p className="text-lg">No preferences set</p>
             )}
             {isEditing && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-2">
                 <input
                   type="text"
                   className="w-full px-4 py-2 bg-white border rounded-md outline-none focus:ring-2 focus:ring-primary"

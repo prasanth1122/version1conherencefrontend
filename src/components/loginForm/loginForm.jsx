@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export default function LoginForm({
   email,
   setEmail,
@@ -49,7 +51,9 @@ export default function LoginForm({
       {/* Forgot Password */}
       <div className="w-full text-right">
         <a
-          href="/forgot-password"
+          href="mailto:support@example.com?subject=Forgot%20Password&body=Hi%20Support,%0A%0AI%20need%20help%20resetting%20my%20password.%20My%20email%20is%20[your-email].%0A%0AThank%20you!"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-sm text-important_text hover:underline"
         >
           Forgot Password?
@@ -78,3 +82,20 @@ export default function LoginForm({
     </form>
   );
 }
+
+// Add PropTypes for validation
+LoginForm.propTypes = {
+  email: PropTypes.string.isRequired, // Email must be a string and required
+  setEmail: PropTypes.func.isRequired, // Function to update email
+  password: PropTypes.string.isRequired, // Password must be a string and required
+  setPassword: PropTypes.func.isRequired, // Function to update password
+  handleSubmit: PropTypes.func.isRequired, // Function for form submission
+  isLoading: PropTypes.bool, // Boolean for loading state
+  errorMessage: PropTypes.string, // String for error message, optional
+};
+
+// Add default props for optional props
+LoginForm.defaultProps = {
+  isLoading: false,
+  errorMessage: "",
+};

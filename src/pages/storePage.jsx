@@ -7,9 +7,11 @@ import LoadingComponent from "../components/loadingComponent/loadingComponent.js
 import { useGlobalContext } from "../store/context/globalContext.jsx";
 import Sidebar from "../components/sidebar/sidebar.jsx";
 import { FaSearch } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 export default function StorePage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [openIndex, setOpenIndex] = useState(0); // Track which month card is open
 
   const dispatch = useDispatch();
   const { periodicals, loading } = useSelector((state) => state.periodicals);
@@ -38,7 +40,7 @@ export default function StorePage() {
     );
   });
 
-  // Group periodicals by month and year
+  // Group periodicals by month and year, and filter out months with no periodicals
   const groupedPeriodicals = Array.from({ length: 12 }, (_, i) => {
     const month = ((currentMonth - i + 11) % 12) + 1; // Wrap-around for months
     const year = currentYear - (month > currentMonth ? 1 : 0); // Adjust year for wrapped months
@@ -50,7 +52,7 @@ export default function StorePage() {
         (p) => p.month === month && p.year === year
       ),
     };
-  });
+  }).filter(({ periodicals }) => periodicals.length > 0); // Exclude months with no periodicals
 
   return (
     <section className="w-full h-full flex flex-col items-center overflow-y-auto scrollbar-hide">
@@ -73,7 +75,7 @@ export default function StorePage() {
 
         {/* Periodicals by Month */}
         <div className="w-full flex flex-col gap-8 mt-8">
-          {groupedPeriodicals.map(({ month, year, periodicals }) => {
+          {groupedPeriodicals.map(({ month, year, periodicals }, index) => {
             const monthNames = [
               "January",
               "February",
@@ -94,11 +96,30 @@ export default function StorePage() {
                 key={`${month}-${year}`}
                 className="w-full p-4 bg-highlight_background rounded-xl"
               >
-                <h2 className="text-2xl text-important_text font-bold mb-4">
-                  {monthNames[month - 1]} {year}
-                </h2>
-                {periodicals.length > 0 ? (
-                  <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                {/* Month Header with Dropdown Toggle */}
+                <div
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  } // Toggle dropdown
+                >
+                  <h2 className="text-2xl text-important_text font-bold">
+                    {monthNames[month - 1]} {year}
+                  </h2>
+                  {openIndex === index ? (
+                    <FaChevronUp className="text-gray-600" />
+                  ) : (
+                    <FaChevronDown className="text-gray-600" />
+                  )}
+                </div>
+
+                {/* Periodicals List (Dropdown Content) */}
+                <div
+                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                    openIndex === index ? "max-h-screen" : "max-h-0"
+                  }`}
+                >
+                  <div className="flex gap-6 overflow-x-auto scrollbar-hide mt-4">
                     {periodicals.map((periodical) => (
                       <StoreCard
                         key={periodical._id}
@@ -112,9 +133,7 @@ export default function StorePage() {
                       />
                     ))}
                   </div>
-                ) : (
-                  <p>No periodicals available this month.</p>
-                )}
+                </div>
               </div>
             );
           })}

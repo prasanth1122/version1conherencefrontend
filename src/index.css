@@ -99,3 +99,80 @@ a:hover {
 .sidebar-closed {
   transform: translateX(-100%);
 }
+.book-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 2000px; /* Increase depth for a more pronounced 3D effect */
+}
+
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform-origin: left; /* Rotation originates from the left edge */
+  transform: rotateY(0);
+  backface-visibility: hidden; /* Hide the back of the page */
+  transition: transform 1.2s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth curve */
+  display: flex;
+  padding: 20px; /* Add padding to mimic a book layout */
+  box-sizing: border-box;
+}
+
+.page.flip {
+  transform: rotateY(-180deg); /* Flip to create the page-turning effect */
+}
+
+.page .content {
+  font-size: 1rem;
+  text-align: left;
+  line-height: 1.6; /* Improve readability */
+  margin: 0; /* Remove default margins */
+  color: #333;
+}
+
+.page p {
+  margin-top: 0; /* Align text at the top */
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0)
+  );
+  transform-origin: right;
+  transform: scaleX(1);
+  backface-visibility: hidden;
+}
+
+.page::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to left,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0)
+  );
+  transform-origin: left;
+  transform: scaleX(1);
+  backface-visibility: hidden;
+}
+.toast-success-progress {
+  background-color: #305050 !important; /* primary color for success */
+}
+.toast-error-progress {
+  background-color: #ff5e5b !important; /* secondary color for error */
+}
